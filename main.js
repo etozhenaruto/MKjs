@@ -5,7 +5,7 @@ const player1 = {
 	player: 1,
 	name: 'Subzero',
 	hp: 100 ,
-	img: 'http://reactmarathon-api.herokuapp.com/assets/subzero.gif', 
+	img: 'http://reactmarathon-api.herokuapp.com/assets/scorpion.gif', 
 	weapon: ['Knife', 'Shark', 'Dick'], 
 	attack: function (name) {
 		console.log(name + ` - Fight...`)
@@ -15,8 +15,8 @@ const player1 = {
 const player2 = {
 	player: 2,
 	name: 'Sonya',
-	hp: 100 ,
-	img: 'http://reactmarathon-api.herokuapp.com/assets/sonya.gif', 
+	hp: 30 ,
+	img: 'http://reactmarathon-api.herokuapp.com/assets/kitana.gif', 
 	weapon: ['Knife', 'Axe', 'Sword'], 
 	attack: function (name) {
 		console.log(name + ` - Fight...`)
@@ -60,21 +60,15 @@ function createPlayer(hero) {
 
 function changeHP(player) {
 	const playerLife = document.querySelector('.player' + player.player+' .life')
-	playerLife.style.width = player.hp + '%' 
-
-	console.log(playerLife.style.width)
-	console.log(player.hp)
-
-	if (player.hp > 0 ) {
-		player.hp = player.hp - randomDamage(1,20)	
-	}
-	else if (player2.hp < 0) {
-		arena.appendChild(playerWin(player1.name))
-		randomButton.classList.add('disable')
-	}
-	else if (player1.hp < 0) {
-		arena.appendChild(playerWin(player2.name))
-		randomButton.classList.add('disable')
+	const damage = randomNum(1,20)
+	
+	player.hp -=  damage	
+	playerLife.style.width = player.hp < 0 ? '0%' : player.hp + '%' 
+	
+	if (player.hp < 0 ) {
+		const playerWinName = player.name === player1.name ? player2.name : player1.name
+		playerWin(playerWinName)
+		
 	}
 	
 }
@@ -82,20 +76,32 @@ function changeHP(player) {
 
 
 function playerWin(name) {	
-	const loseTitle = createBlock('winTitle')
-	loseTitle.innerText = name + ' win'
-	return loseTitle
+	const winTitle = createBlock('winTitle')
+	winTitle.innerText = name + ' win'
+	arena.appendChild(winTitle)
+	randomButton.classList.add('hidden')
+	
 }
 
 
 
 randomButton.addEventListener('click', () => {
-	changeHP(player1)
+	const whoTakeDamage = randomNum(1,2)
+	switch (whoTakeDamage) {
+		case 1 :
+			changeHP(player1)
+			break;
+		case 2 :
+			changeHP(player2)
+			break;
+		default:
+			break;
+	} 
 })
 
 
 
-function randomDamage(min, max) { 
+function randomNum(min, max) { 
 	return Math.floor(Math.random() * (max - min + 1) + min)
  }
 
